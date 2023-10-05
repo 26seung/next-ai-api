@@ -2,17 +2,23 @@
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ArrowRight, MessageSquare } from "lucide-react";
+import { ArrowRight, ImageIcon, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 const tools = [
   {
-    label: "Conversation",
+    label: "대화 생성기",
     icon: MessageSquare,
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
     href: "/conversation",
+  },
+  {
+    label: "이미지 생성기",
+    icon: ImageIcon,
+    color: "text-pink-700",
+    href: "/image",
   },
 ];
 
@@ -23,7 +29,7 @@ const DashboardPage = () => {
     <div>
       <div className="mb-8 space-y-4">
         <h2 className="text-2xl md:text-4xl font-bold text-center">
-          Dashboard Page
+          Dashboard
         </h2>
         <p className="text-muted-foreground font-light text-sm md:text-lg text-center">
           Chat AI
