@@ -2,7 +2,7 @@ import { OpenAIStream, StreamingTextResponse } from "ai";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
-// import { Configuration, OpenAIApi } from 'openai-edge'
+// import { Configuration, OpenAIApi } from "openai-edge";
 
 // API KEY 가져오기
 const openai = new OpenAI({
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   const { messages } = await req.json();
 
-  // Exception Process
+  // Exception (api키 & 내용) 없는경우
   if (!openai.apiKey) {
     return new NextResponse("OpenAI API Key not configured.", {
       status: 500,
@@ -43,3 +43,5 @@ export async function POST(req: Request) {
   // Respond with the stream
   return new StreamingTextResponse(stream);
 }
+
+// https://vercel.com/blog/introducing-the-vercel-ai-sdk
