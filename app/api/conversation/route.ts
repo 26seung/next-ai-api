@@ -4,8 +4,9 @@ import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
 
 // API KEY 가져오기
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // This is also the default, can be omitted
+  apiKey: process.env.OPENAI_API_KEY,
 });
+
 // AI 의 역활을 설정
 const instructionMessage: ChatCompletionMessage = {
   role: "system",
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { messages } = body;
 
-    // Exception Process
+    // Exception  (api키 & 내용) 없는경우
     if (!openai.apiKey) {
       return new NextResponse("OpenAI API Key not configured.", {
         status: 500,
@@ -33,10 +34,8 @@ export async function POST(req: Request) {
       model: "gpt-3.5-turbo",
       messages: [instructionMessage, ...messages],
     });
-    console.log("[CONVERSATION_MESSAGE] : ", chatCompletion.choices[0].message);
     return NextResponse.json(chatCompletion.choices[0].message);
   } catch (error) {
-    console.log("[CONVERSATION_ERROR] : ", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
