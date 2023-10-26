@@ -81,7 +81,7 @@ const ImagePage = () => {
     <div>
       <Heading
         title="이미지 생성기"
-        description="이미지를 생성합니다."
+        description="DALL·E 모델을 사용하여 이미지를 생성합니다."
         icon={ImageIcon}
         iconColor="text-pink-700"
         bgColor="bg-pink-700/10"
@@ -102,6 +102,7 @@ const ImagePage = () => {
                 grid
                 grid-cols-12
                 gap-2
+                bg-white
               "
             >
               <FormField
@@ -176,7 +177,7 @@ const ImagePage = () => {
                 )}
               />
               <Button
-                className="col-span-12 lg:col-span-2 w-full"
+                className=" col-span-12 lg:col-span-2 w-full"
                 type="submit"
                 disabled={isLoading}
                 size="icon"

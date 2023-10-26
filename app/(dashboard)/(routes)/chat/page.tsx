@@ -16,7 +16,7 @@ import ReactMarkdown from "react-markdown";
 import { useChat } from "ai/react";
 import { Loader } from "@/components/loader";
 
-const ConversationPage = () => {
+const ChatPage = () => {
   // vercel-ai-sdk 양식
   // useChat()는 자동으로 사용자 메시지를 채팅 기록에 추가하고 구성된 엔드포인트에 대한 API 호출 ("/api/chat")
   const { messages, input, handleInputChange, handleSubmit } = useChat({
@@ -136,4 +136,4 @@ const ConversationPage = () => {
   );
 };
 
-export default ConversationPage;
+export default ChatPage;

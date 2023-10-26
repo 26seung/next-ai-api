@@ -11,7 +11,7 @@ const font = Montserrat({ weight: "600", subsets: ["latin"] });
 
 const MainPage = () => {
   return (
-    <div className="h-full bg-[#111827] overflow-auto">
+    <div className="h-full bg-gradient-to-bl from-gray-900 to-gray-600 overflow-auto ">
       <div className="mx-auto max-w-screen-xl h-full w-full">
         {/* main nav */}
         <nav className="p-4 bg-transparent flex items-center justify-between">

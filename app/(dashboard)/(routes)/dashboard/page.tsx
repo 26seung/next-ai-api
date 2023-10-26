@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ArrowRight, ImageIcon, MessageSquare } from "lucide-react";
+import { ArrowRight, ImageIcon, MessageSquare, Bot } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -13,6 +13,12 @@ const tools = [
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
     href: "/conversation",
+  },
+  {
+    label: "chat Stream",
+    icon: Bot,
+    color: "text-pink-700",
+    href: "/chat",
   },
   {
     label: "이미지 생성기",

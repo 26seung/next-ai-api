@@ -33,14 +33,13 @@ const ConversationPage = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("aaaa : ", values);
-    console.log("form : ", form);
     try {
       const userMessage: ChatCompletionMessage = {
         role: "user",
         content: values.prompt,
       };
       const newMessages = [...messages, userMessage];
+      // 데이터 응답
       const response = await axios.post("/api/conversation", {
         messages: newMessages,
       });
@@ -78,6 +77,7 @@ const ConversationPage = () => {
                 grid
                 grid-cols-12
                 gap-2
+                bg-white
               "
             >
               <FormField
@@ -86,7 +86,7 @@ const ConversationPage = () => {
                   <FormItem className="col-span-12 lg:col-span-10">
                     <FormControl className="m-0 p-0">
                       <Input
-                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+                        className=" border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                         disabled={isLoading}
                         placeholder="메시지를 입력하세요."
                         {...field}

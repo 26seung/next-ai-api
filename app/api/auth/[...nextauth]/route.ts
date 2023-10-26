@@ -1,30 +1,43 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import KakaoProvider from "next-auth/providers/kakao";
-import NaverProvider from "next-auth/providers/naver";
 
-export const authOptions = {
+// 어댑터 추가
+import prisma from "@/lib/prismadb";
+
+export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   // Configure one or more authentication providers
   providers: [
     GithubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
       clientSecret: process.env.AUTH_GITHUB_SECRET as string,
     }),
-    // 아래와 같은 형식으로 소셜로그인 추가 가능하며, 현재 테스트는 깃허브만 사용
     // GoogleProvider({
     //   clientId: process.env.AUTH_GOOGLE_ID ?? "",
     //   clientSecret: process.env.AUTH_GOOGLE_SECRET ?? "",
     // }),
-    // KakaoProvider({
-    //   clientId: process.env.AUTH_KAKAO_ID ?? "",
-    //   clientSecret: process.env.AUTH_KAKAO_SECRET ?? "",
-    // }),
-    // NaverProvider({
-    //   clientId: process.env.AUTH_NAVER_ID ?? "",
-    //   clientSecret: process.env.AUTH_NAVER_SECRET ?? "",
-    // }),
-    // ...add more providers here
+    // email , pw 로 DB 사용
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "email", type: "text" },
+        password: { label: "password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Invalid credentials");
+        }
+        const user = await prisma.user.findUnique({
+          where: {
+            email: credentials.email,
+          },
+        });
+        return user;
+      },
+    }),
   ],
 };
 
