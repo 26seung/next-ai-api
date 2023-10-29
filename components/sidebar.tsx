@@ -6,7 +6,8 @@ import {
   LayoutDashboard,
   MessageSquare,
   Settings,
-  VideoIcon,
+  Bot,
+  FileText,
 } from "lucide-react";
 import { Montserrat } from "next/font/google";
 import { usePathname } from "next/navigation";
@@ -19,31 +20,37 @@ const poppins = Montserrat({ weight: "600", subsets: ["latin"] });
 //  메뉴 목록 선언
 const routes = [
   {
-    label: "Dashboard",
+    label: "대시보드",
     icon: LayoutDashboard,
     href: "/dashboard",
     color: "text-sky-500",
   },
   {
-    label: "Conversation",
+    label: "대화 생성기",
     icon: MessageSquare,
     href: "/conversation",
     color: "text-violet-500",
   },
   {
-    label: "Image Generation",
+    label: "Chat Stream",
+    icon: Bot,
+    color: "text-pink-700",
+    href: "/chat",
+  },
+  {
+    label: "Chat PDF  ",
+    icon: FileText,
+    color: "text-pink-700",
+    href: "/pdf",
+  },
+  {
+    label: "이미지 생성기",
     icon: ImageIcon,
     color: "text-pink-700",
     href: "/image",
   },
   {
-    label: "Video Generation",
-    icon: VideoIcon,
-    color: "text-orange-700",
-    href: "/video",
-  },
-  {
-    label: "Settings",
+    label: "설정",
     icon: Settings,
     href: "/settings",
   },
@@ -52,14 +59,14 @@ const routes = [
 const Sidebar = () => {
   const pathname = usePathname();
   return (
-    <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
-      <div className="px-3 py-2 flex-1">
-        <Link href="/dashboard" className="flex items-center pl-3 mb-14">
-          <div className="relative h-10 w-10 mr-2">
+    <div className="space-y-4 py-4 flex flex-col h-full bg-gradient-to-b from-gray-900 to-gray-600 text-white">
+      <div className="px-3 py-3 flex-1">
+        <Link href="/dashboard" className="flex items-center pl-6 mb-16">
+          <div className="relative h-8 w-8 mr-4">
             <Image sizes="none" fill alt="Logo" src="/logo.png" />
           </div>
           <h1 className={cn("text-2xl font-bold", poppins.className)}>
-            AI Plaform
+            AI assist
           </h1>
         </Link>
         {/* //  Menu Link 들의 목록 나열 */}
@@ -77,7 +84,7 @@ const Sidebar = () => {
               )}
             >
               <div className="flex items-center flex-1">
-                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
+                <route.icon className={cn("h-7 w-5 mr-5", route.color)} />
                 {route.label}
               </div>
             </Link>
