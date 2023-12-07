@@ -33,9 +33,9 @@ const PdfPage = () => {
         bgColor="bg-violet-500/10"
       />
       <div className="px-4 lg:px-8">
-        {/* <FileUpload /> */}
-        <div className="flex min-h-screen rounded-lg border border-white">
-          <PDFViewer pdfUrl="https://chatpdf0-next.s3.ap-northeast-2.amazonaws.com/uploads/1698169617140resume.pdf" />
+        <FileUpload />
+        <div className="flex min-h-screen rounded-lg border border-slate-300 bg-white">
+          {/* <PDFViewer pdfUrl="https://chatpdf0-next.s3.ap-northeast-2.amazonaws.com/uploads/1698169617140resume.pdf" /> */}
           {/* <div className="flex w-full min-h-screen overflow-scroll"> */}
           {/* pdf viewer */}
           {/* <div className="min-h-screen p-4 oveflow-scroll flex-[5] border-l-2 bg-white"> */}
@@ -44,9 +44,9 @@ const PdfPage = () => {
           {/* chat component */}
           {/* <div className="flex-[3] border-l-2 border-l-slate-200 bg-white"> */}
           {/* <ChatComponent chatId={parseInt(chatId)} /> */}
-          {/* </div> */}
-          {/* </div> */}
         </div>
+        {/* </div> */}
+        {/* </div> */}
       </div>
     </div>
   );
