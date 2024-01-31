@@ -23,7 +23,13 @@ const ChatComponent = () => {
 
   // vercel-ai-sdk 양식
   // useChat()는 자동으로 사용자 메시지를 채팅 기록에 추가하고 구성된 엔드포인트에 대한 API 호출 ("/api/chat")
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit: chatSubmit,
+    isLoading,
+  } = useChat({
     api: "/api/chat",
   });
 
@@ -33,8 +39,6 @@ const ChatComponent = () => {
       prompt: "",
     },
   });
-
-  const isLoading = form.formState.isSubmitting;
 
   // textarea autosize
   const textAreaRef = React.useRef<HTMLTextAreaElement | null>(null);
@@ -51,11 +55,11 @@ const ChatComponent = () => {
       if (e.key === "Enter") {
         if (!e.shiftKey) {
           e.preventDefault();
-          handleSubmit(e);
+          chatSubmit(e);
         }
       }
     },
-    [handleSubmit]
+    [chatSubmit]
   );
 
   return (
@@ -64,7 +68,7 @@ const ChatComponent = () => {
         <div>
           <Form {...form}>
             <form
-              onSubmit={handleSubmit}
+              onSubmit={chatSubmit}
               className="rounded-lg border w-full p-2 px-3 focus-within:shadow-sm grid grid-cols-12 gap-2 items-center bg-white"
             >
               <FormField
@@ -99,11 +103,7 @@ const ChatComponent = () => {
           </Form>
         </div>
         <div className="space-y-4 mt-4">
-          {isLoading && (
-            <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
-              <Loader />
-            </div>
-          )}
+          {/* message 여부 따라 css */}
           {messages.length === 0 && !isLoading && (
             <Empty label="시작된 대화가 없습니다." />
           )}
@@ -133,7 +133,6 @@ const ChatComponent = () => {
                   )}
                 </div>
                 <div className="mt-1 pl-12">
-                  {/* <p className="text-sm">{message.content}</p> */}
                   {/* code 설명 시 시각적 요소를 위해 "react-markdown" 사용하여 css 디자인 */}
                   <ReactMarkdown
                     components={{
