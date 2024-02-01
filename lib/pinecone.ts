@@ -6,7 +6,7 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { Document } from "langchain/document";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { PineconeStore } from "langchain/vectorstores/pinecone";
-import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
 // https://js.langchain.com/docs/modules/data_connection/document_loaders/how_to/pdf
 
@@ -47,7 +47,9 @@ export async function s3IntoPinecone(fileKey: string) {
   // const pinecone = await pineconeClient();
   // const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX!);
 
-  // await pineconeIndex.upsert(vectors);
+  // index의 레코드 구분을 위한 네임스페이스를 생성
+  // const namespace = pineconeIndex.namespace(fileKey);
+  // await namespace.upsert(vectors);
 
   return vectors;
 }
@@ -55,12 +57,7 @@ export async function s3IntoPinecone(fileKey: string) {
 // 임베딩처리
 export const embedDocument = async (doc: Document) => {
   // id hash 처리
-  const sha256 = (text: string) => {
-    const hash = crypto.createHash("sha256");
-    hash.update(text);
-    return hash.digest("hex");
-  };
-  const hash = sha256(doc.metadata.text);
+  const hash = await bcrypt.hash(doc.metadata.text, 10);
   // embedding 처리 (openai)
   const embeddings = new OpenAIEmbeddings();
   const res = await embeddings.embedQuery(doc.pageContent);
@@ -81,7 +78,7 @@ export const truncateStringByBytes = (str: string, bytes: number) => {
   return new TextDecoder("utf-8").decode(enc.encode(str).slice(0, bytes));
 };
 
-async function splitPDF(page: PDFPageType) {
+const splitPDF = async (page: PDFPageType) => {
   let { pageContent, metadata } = page;
   pageContent = pageContent.replace(/\n/g, "");
 
@@ -99,4 +96,4 @@ async function splitPDF(page: PDFPageType) {
     }),
   ]);
   return docs;
-}
+};
