@@ -1,8 +1,15 @@
 import Heading from "@/components/heading";
 import { Bot } from "lucide-react";
+import React from "react";
 import ChatComponent from "@/components/chatComponent";
 
-const ChatPage = async () => {
+type Props = {
+  params: {
+    chatId: string;
+  };
+};
+
+const ChatPage = ({ params: { chatId } }: Props) => {
   return (
     <div>
       <Heading
@@ -13,7 +20,7 @@ const ChatPage = async () => {
         bgColor="bg-violet-500/10"
       />
       <div className="px-4 lg:px-8">
-        <ChatComponent newChat={true} />
+        <ChatComponent newChat={false} chat_id={chatId} />
       </div>
     </div>
   );
