@@ -1,11 +1,9 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import { S3Loader } from "langchain/document_loaders/web/s3";
 import { downloadFromS3 } from "./s3";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { Document } from "langchain/document";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { PineconeStore } from "langchain/vectorstores/pinecone";
 import bcrypt from "bcryptjs";
 
 // https://js.langchain.com/docs/modules/data_connection/document_loaders/how_to/pdf
@@ -44,12 +42,16 @@ export async function s3IntoPinecone(fileKey: string) {
   //   .map((doc) => embedDocument(doc.metadata.text));
   const vectors = await Promise.all(documents.flat().map(embedDocument));
   // 4. upload to pinecone
-  // const pinecone = await pineconeClient();
-  // const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX!);
+  const pinecone = await pineconeClient();
+  const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX!);
 
   // index의 레코드 구분을 위한 네임스페이스를 생성
-  // const namespace = pineconeIndex.namespace(fileKey);
-  // await namespace.upsert(vectors);
+  const convertToAscii = fileKey
+    .replace(/[^\x00-\x7F]/g, "")
+    .replace(/[\s-]+/g, "_");
+  // console.log("[ convertToAscii ] :: ", convertToAscii);
+  const namespace = pineconeIndex.namespace(convertToAscii);
+  await namespace.upsert(vectors);
 
   return vectors;
 }

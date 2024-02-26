@@ -5,9 +5,6 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 export async function getPinecone(query: string, fileKey: string) {
   const embeddings = new OpenAIEmbeddings();
   const queryEmbeddings = await embeddings.embedQuery(query);
-  //   console.log("query : ", query);
-  //   console.log("fileKey : ", fileKey);
-  //   const context = "난 이유승이라는 친구가 있어";
   console.log("queryEmbeddings : ", queryEmbeddings);
   const matches = await getMatchesFromEmbeddings(queryEmbeddings, fileKey);
 
@@ -43,7 +40,10 @@ export async function getMatchesFromEmbeddings(
   const pinecone = await pineconeClient();
   const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX!);
   //   // 인덱스의 레코드를 네임스페이스로 구분
-  const namespace = pineconeIndex.namespace(fileKey);
+  const convertToAscii = fileKey
+    .replace(/[^\x00-\x7F]/g, "")
+    .replace(/[\s-]+/g, "_");
+  const namespace = pineconeIndex.namespace(convertToAscii);
   // 쿼리 벡터를 사용하여 인덱스를 검색 (유사성 점수와 함께 인덱스에서 가장 유사한 레코드의 ID를 검색)
   const queryResult = await namespace.query({
     topK: 5,
