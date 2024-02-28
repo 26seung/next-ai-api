@@ -1,4 +1,5 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
+// npx drizzle-kit push:pg
 
 import {
   integer,
@@ -9,11 +10,10 @@ import {
   primaryKey,
   timestamp,
   varchar,
+  uuid,
 } from "drizzle-orm/pg-core";
 
 import type { AdapterAccount } from "@auth/core/adapters";
-
-export const userRoleEnum = pgEnum("user_role_enum", ["system", "user"]);
 
 // nextAuth
 export const users = pgTable("user", {
@@ -22,7 +22,7 @@ export const users = pgTable("user", {
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
-  role: userRoleEnum("role").notNull(),
+  password: text("password"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 export const accounts = pgTable(
@@ -43,7 +43,9 @@ export const accounts = pgTable(
     session_state: text("session_state"),
   },
   (account) => ({
-    compoundKey: primaryKey(account.provider, account.providerAccountId),
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
   })
 );
 export const sessions = pgTable("session", {
@@ -54,41 +56,45 @@ export const sessions = pgTable("session", {
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
-export const verificationTokens = pgTable(
-  "verificationToken",
-  {
-    identifier: text("identifier").notNull(),
-    token: text("token").notNull(),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
-  },
-  (vt) => ({
-    compoundKey: primaryKey(vt.identifier, vt.token),
-  })
-);
-
 //  chat
+export type DrizzleChat = typeof chats.$inferSelect;
+export type NewChat = typeof chats.$inferInsert;
+export type InMessage = typeof messages.$inferInsert;
+
+export const messagesRoleEnum = pgEnum("user_role_enum", ["system", "user"]);
+export const chatsRoleEnum = pgEnum("chat_type_enum", ["chat", "image", "pdf"]);
 
 export const chats = pgTable("chats", {
-  id: serial("id").primaryKey(),
-  pdfName: text("pdf_name").notNull(),
-  pdfUrl: text("pdf_url").notNull(),
+  id: text("id").notNull().primaryKey(),
+  type: chatsRoleEnum("chat_type").notNull(),
+  content: text("content").notNull(),
+  // chat: text("chat_type").notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  userId: varchar("user_id", { length: 256 }).notNull(),
-  fileKey: text("file_key").notNull(),
 });
-
-export type DrizzleChat = typeof chats.$inferSelect;
 
 export const messages = pgTable("messages", {
   id: serial("id").primaryKey(),
-  chatId: integer("chat_id")
-    .references(() => chats.id)
+  chatId: text("chat_id")
+    .references(() => chats.id, { onDelete: "cascade" })
     .notNull(),
   content: text("content").notNull(),
+  role: messagesRoleEnum("role").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  role: userRoleEnum("role").notNull(),
 });
 
+export const pdf = pgTable("pdf", {
+  id: serial("id").primaryKey(),
+  pdfName: text("pdf_name").notNull(),
+  pdfUrl: text("pdf_url").notNull(),
+  chatId: text("chat_id")
+    .references(() => chats.id, { onDelete: "cascade" })
+    .notNull(),
+  fileKey: text("file_key").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
 // export const userSubscriptions = pgTable("user_subscriptions", {
 //   id: serial("id").primaryKey(),
 //   userId: varchar("user_id", { length: 256 }).notNull().unique(),
