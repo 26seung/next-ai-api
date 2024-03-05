@@ -1,6 +1,4 @@
-import { db } from "@/lib/db";
-import { messages } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { dbGetMessage } from "@/data/data";
 import { NextResponse } from "next/server";
 
 // drizzle :: get chat messages
@@ -11,13 +9,9 @@ export async function POST(req: Request) {
     if (!chat_id) {
       return NextResponse.json([]);
     }
+    const messages = await dbGetMessage(chat_id);
 
-    const _messages = await db
-      .select()
-      .from(messages)
-      .where(eq(messages.chatId, chat_id));
-
-    return NextResponse.json(_messages);
+    return NextResponse.json(messages);
   } catch (error) {
     console.error("[DB_GET_MESSAGES_ERROR] : ", error);
     return new NextResponse("DB_GET_MESSAGES_ERROR", { status: 500 });

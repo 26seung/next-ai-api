@@ -17,7 +17,6 @@ export async function POST(req: Request) {
       .delete(chats)
       .where(eq(chats.id, chat_id))
       .returning({ deletedId: chats.id });
-
     return NextResponse.json(response);
   } catch (error) {
     console.error("[DB_DELETE_CHATS_ERROR] : ", error);
