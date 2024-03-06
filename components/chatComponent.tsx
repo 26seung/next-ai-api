@@ -8,18 +8,29 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import ReactMarkdown from "react-markdown";
 import { z } from "zod";
 import { Button } from "./ui/button";
-import { Loader } from "./loader";
-import { Empty } from "./empty";
-import { cn } from "@/lib/utils";
-import { UserAvatar } from "./avatar-user";
-import { BotAvatar } from "./avatar-bot";
+import { Empty } from "./ui-user/empty";
+import { cn, useGetChats, useGetMessages } from "@/lib/utils";
+import { UserAvatar } from "./ui-user/avatar-user";
+import { BotAvatar } from "./ui-user/avatar-bot";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { Textarea } from "./ui/textarea";
+import { useRouter } from "next/navigation";
 
-const ChatComponent = () => {
+interface ChatProps {
+  newChat: boolean;
+  chat_id?: string;
+  fileKey?: string;
+}
+
+const ChatComponent = ({ newChat, chat_id, fileKey }: ChatProps) => {
+  const router = useRouter();
   // next-auth
   const { data: session } = useSession();
+  // 이전 messages 데이터 가져오기
+  const { data: getMessages } = useGetMessages(chat_id);
+  // 새로운 채팅시 채팅리스트 조회
+  const { refetch: refetchChats } = useGetChats(session?.user?.email);
 
   // vercel-ai-sdk 양식
   // useChat()는 자동으로 사용자 메시지를 채팅 기록에 추가하고 구성된 엔드포인트에 대한 API 호출 ("/api/chat")
@@ -31,6 +42,16 @@ const ChatComponent = () => {
     isLoading,
   } = useChat({
     api: "/api/chat",
+    body: { chat_id, fileKey },
+    initialMessages: getMessages,
+    onFinish: async () => {
+      if (newChat) {
+        await refetchChats().then(({ data }) => {
+          const lastChatId = data[data.length - 1].id;
+          router.push(`/chat/${lastChatId}`);
+        });
+      }
+    },
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -52,9 +73,8 @@ const ChatComponent = () => {
   // [SHIFT + ENTER]
   const onKeydownChat = React.useCallback(
     (e: any) => {
-      if (e.key === "Enter") {
+      if (e.keyCode === 13) {
         if (!e.shiftKey) {
-          e.preventDefault();
           chatSubmit(e);
         }
       }
