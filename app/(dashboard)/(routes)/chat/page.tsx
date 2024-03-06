@@ -1,8 +1,13 @@
-import Heading from "@/components/heading";
+import Heading from "@/components/ui-user/heading";
 import { Bot } from "lucide-react";
 import ChatComponent from "@/components/chatComponent";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 
 const ChatPage = async () => {
+  const { userId } = await auth();
+  if (!userId) return redirect("/dashboard");
+
   return (
     <div>
       <Heading

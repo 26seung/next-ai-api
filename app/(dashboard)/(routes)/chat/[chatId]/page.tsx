@@ -1,7 +1,8 @@
-import Heading from "@/components/heading";
+import Heading from "@/components/ui-user/heading";
 import { Bot } from "lucide-react";
 import React from "react";
 import ChatComponent from "@/components/chatComponent";
+import { dbCheckChat } from "@/data/data";
 
 type Props = {
   params: {
@@ -9,7 +10,11 @@ type Props = {
   };
 };
 
-const ChatPage = ({ params: { chatId } }: Props) => {
+const ChatPage = async ({ params: { chatId } }: Props) => {
+  const check = await dbCheckChat(chatId);
+
+  if (!check) return;
+
   return (
     <div>
       <Heading
