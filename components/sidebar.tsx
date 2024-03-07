@@ -1,63 +1,18 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  ImageIcon,
-  LayoutDashboard,
-  MessageSquare,
-  Settings,
-  Bot,
-  FileText,
-} from "lucide-react";
 import { Montserrat } from "next/font/google";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { routes } from "@/app/(dashboard)/(routes)/dashboard/constants";
 
 const poppins = Montserrat({ weight: "600", subsets: ["latin"] });
 
-//  메뉴 목록 선언
-const routes = [
-  {
-    label: "대시보드",
-    icon: LayoutDashboard,
-    href: "/dashboard",
-    color: "text-sky-500",
-  },
-  {
-    label: "대화 생성기",
-    icon: MessageSquare,
-    href: "/conversation",
-    color: "text-violet-500",
-  },
-  {
-    label: "Chat Stream",
-    icon: Bot,
-    color: "text-pink-700",
-    href: "/chat",
-  },
-  {
-    label: "Chat PDF  ",
-    icon: FileText,
-    color: "text-pink-700",
-    href: "/pdf",
-  },
-  {
-    label: "이미지 생성기",
-    icon: ImageIcon,
-    color: "text-pink-700",
-    href: "/image",
-  },
-  {
-    label: "설정",
-    icon: Settings,
-    href: "/settings",
-  },
-];
-
 const Sidebar = () => {
   const pathname = usePathname();
+
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-gradient-to-b from-gray-900 to-gray-600 text-white">
       <div className="px-3 py-3 flex-1">
