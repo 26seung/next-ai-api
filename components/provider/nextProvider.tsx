@@ -1,5 +1,7 @@
 "use client";
 import { SessionProvider } from "next-auth/react";
+
+// export default SessionProvider;
 import { useEffect, useState } from "react";
 
 interface Props {
