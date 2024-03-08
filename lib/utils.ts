@@ -31,6 +31,7 @@ export const useGetMessages = (chat_id?: string) => {
     },
   });
 };
+
 // 선택된 채팅을 제거
 export const useDeleteChat = () => {
   const { refetch: refetchChats } = useGetChats(true);
