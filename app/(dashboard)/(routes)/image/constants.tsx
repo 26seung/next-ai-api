@@ -6,14 +6,15 @@ import { z } from "zod";
 export const formSchema = z.object({
   prompt: z
     .string()
-    .min(1, {
-      message: "Must be 1 or more characters long.",
+    .min(2, {
+      message: "Must be 2 or more characters long.",
     })
     .max(1000),
-  n: z.string().min(1),
+  // n: z.string().min(1),
   size: z.string().min(1),
 });
 
+// model: "dall-e-3" 에서는 1개의 이미지만 응답
 //  이미지 옵션 (1~10 개)
 export const nOptions = [
   {
@@ -40,15 +41,15 @@ export const nOptions = [
 // (256x256, 512x512또는 중 하나여야 합니다. 기본값: 1024x1024)
 export const sizeOptions = [
   {
-    value: "256x256",
-    label: "256x256",
-  },
-  {
-    value: "512x512",
-    label: "512x512",
-  },
-  {
     value: "1024x1024",
     label: "1024x1024",
+  },
+  {
+    value: "1024x1792",
+    label: "1024x1792",
+  },
+  {
+    value: "1792x1024",
+    label: "1792x1024",
   },
 ];

@@ -58,7 +58,7 @@ const ModalLogin = ({ isOpen, onClose }: ModalProps) => {
           Github 계정으로 로그인
         </Button>
         <Button
-          onClick={() => signIn("github")}
+          onClick={() => signIn("google")}
           variant="outline"
           className="relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transition w-full border-2"
         >

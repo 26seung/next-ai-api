@@ -2,34 +2,26 @@
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ArrowRight, ImageIcon, MessageSquare, Bot } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
-
-const tools = [
-  {
-    label: "대화 생성기",
-    icon: MessageSquare,
-    color: "text-violet-500",
-    bgColor: "bg-violet-500/10",
-    href: "/conversation",
-  },
-  {
-    label: "chat Stream",
-    icon: Bot,
-    color: "text-pink-700",
-    href: "/chat",
-  },
-  {
-    label: "이미지 생성기",
-    icon: ImageIcon,
-    color: "text-pink-700",
-    href: "/image",
-  },
-];
+import { routes } from "./constants";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 
 const DashboardPage = () => {
   const router = useRouter();
+  // next-auth
+  const { data: session } = useSession();
+
+  // 페이지 이동 및 로그인 알림창
+  const handleRouter = (tool: any) => {
+    if (tool.auth === "guest" || session) {
+      router.push(tool.href);
+    } else {
+      toast.error("해당 서비스 로그인 필요");
+    }
+  };
 
   return (
     <div>
@@ -41,24 +33,30 @@ const DashboardPage = () => {
           Chat AI
         </p>
       </div>
-      <div className="px-4 md:px-20 lg:px-32 space-y-4">
-        {tools.map((tool) => (
-          <Card
-            onClick={() => {
-              router.push(tool.href);
-            }}
-            key={tool.href}
-            className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer"
-          >
-            <div className="flex items-center gap-x-4">
-              <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
-                <tool.icon className={cn("w-8 h-8", tool.color)} />
-              </div>
-              <div className="font-semibold">{tool.label}</div>
-            </div>
-            <ArrowRight className="w-5 h-5" />
-          </Card>
-        ))}
+      <div className="px-4 md:px-32 lg:px-52 space-y-4 ">
+        {routes.map(
+          (tool) =>
+            !(tool.layout === "side") && (
+              <Card
+                onClick={() => handleRouter(tool)}
+                key={tool.href}
+                className={cn(
+                  "p-4 !isSelectable border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer",
+                  !session &&
+                    tool.auth === "user" &&
+                    "cursor-not-allowed bg-gray-800/30"
+                )}
+              >
+                <div className="flex items-center gap-x-4">
+                  <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
+                    <tool.icon className={cn("w-8 h-8 ", tool.color)} />
+                  </div>
+                  <div className="p-2 font-semibold">{tool.label}</div>
+                </div>
+                <ArrowRight className="w-5 h-5" />
+              </Card>
+            )
+        )}
       </div>
     </div>
   );

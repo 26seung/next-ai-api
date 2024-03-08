@@ -6,14 +6,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema, nOptions, sizeOptions } from "./constants";
-import Heading from "@/components/heading";
-import { ArrowDownToLine, Download, ImageIcon } from "lucide-react";
+import { formSchema, sizeOptions } from "./constants";
+import Heading from "@/components/ui-user/heading";
+import { ImageIcon } from "lucide-react";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Empty } from "@/components/empty";
-import { Loader } from "@/components/loader";
+import { Empty } from "@/components/ui-user/empty";
+import { Loader } from "@/components/ui-user/loader";
 import {
   Select,
   SelectContent,
@@ -21,72 +21,49 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardFooter } from "@/components/ui/card";
+import toast from "react-hot-toast";
 
+type ImageSchema = z.infer<typeof formSchema>;
 /** 이미지생성 AI */
 
 const ImagePage = () => {
   const router = useRouter();
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<ImageSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
-      n: "1",
-      size: "512x512",
+      size: "1024x1024",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: ImageSchema) => {
     try {
-      setImages([]);
-
       const response = await axios.post("/api/image", values);
-      const urls = response.data.map((image: { url: string }) => {
-        return image.url;
-      });
-
-      setImages(urls);
+      setImages(response?.data[0]?.url);
 
       form.reset();
     } catch (error: any) {
-      console.log("IMAGE PAGE : ", error);
+      toast.error("다른 명령어를 입력해 주세요");
+      console.error("IMAGE PAGE error : ", error);
     } finally {
       router.refresh();
     }
-  };
-
-  const handleDownload = async (src: string) => {
-    await fetch(src, {
-      // headers: { "Content-Type": "application/json" },
-      mode: "no-cors",
-    })
-      .then((res) => res.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        // link.download = imageName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
   };
 
   return (
     <div>
       <Heading
         title="이미지 생성기"
-        description="DALL·E 모델을 사용하여 이미지를 생성합니다."
+        description="DALL·E 3 모델을 사용하여 고품질 이미지를 생성합니다. "
         icon={ImageIcon}
         iconColor="text-pink-700"
         bgColor="bg-pink-700/10"
       />
-      <div className="px-4 lg:px-8">
+      <div className="px-10 lg:pr-32">
         <div>
           <Form {...form}>
             <form
@@ -108,7 +85,7 @@ const ImagePage = () => {
               <FormField
                 name="prompt"
                 render={({ field }) => (
-                  <FormItem className="col-span-12 lg:col-span-6">
+                  <FormItem className="col-span-12 lg:col-span-8">
                     <FormControl className="m-0 p-0">
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
@@ -117,34 +94,6 @@ const ImagePage = () => {
                         {...field}
                       />
                     </FormControl>
-                  </FormItem>
-                )}
-              />
-              {/* n개 옵션 radio 적용 */}
-              <FormField
-                control={form.control}
-                name="n"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 lg:col-span-2">
-                    <Select
-                      disabled={isLoading}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue defaultValue={field.value} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {nOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
                   </FormItem>
                 )}
               />
@@ -181,6 +130,7 @@ const ImagePage = () => {
                 type="submit"
                 disabled={isLoading}
                 size="icon"
+                spinner={isLoading}
               >
                 Send
               </Button>
@@ -194,36 +144,28 @@ const ImagePage = () => {
               <Loader />
             </div>
           )}
-          {images.length === 0 && !isLoading && (
-            <Empty label="생성된 이미지가 없습니다." />
-          )}
+          {!images && !isLoading && <Empty label="생성된 이미지가 없습니다." />}
           {/* 생성된 이미지 뿌리기 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
-            {images.map((src) => (
-              <Card key={src} className="rounded-lg overflow-hidden">
+          <div className="flex justify-center mt-10 ">
+            {images && (
+              <div
+                key={images}
+                className="rounded-2xl overflow-hidden bg-slate-200 cursor-pointer border border-gray-300 shadow-md"
+                onClick={() => window.open(images)}
+              >
                 <div className="relative aspect-square">
-                  <Image fill alt="Generated" src={src} sizes="none" />
+                  <Image
+                    // fill
+                    alt="Generated"
+                    src={images}
+                    sizes="none"
+                    width={500}
+                    height={500}
+                    priority={true}
+                  />
                 </div>
-                <CardFooter className="p-2 space-x-2 ">
-                  <Button
-                    onClick={() => window.open(src)}
-                    variant="default"
-                    className="w-full"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    이미지 보기
-                  </Button>
-                  <Button
-                    onClick={() => handleDownload(src)}
-                    variant="destructive"
-                    className="w-full"
-                  >
-                    <ArrowDownToLine className="h-4 w-4 mr-2" />
-                    다운로드
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

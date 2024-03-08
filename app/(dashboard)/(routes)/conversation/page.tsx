@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import Heading from "@/components/heading";
+import Heading from "@/components/ui-user/heading";
 import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -12,16 +12,16 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Empty } from "@/components/empty";
-import { Loader } from "@/components/loader";
-import { UserAvatar } from "@/components/avatar-user";
-import { BotAvatar } from "@/components/avatar-bot";
-import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
+import { Empty } from "@/components/ui-user/empty";
+import { Loader } from "@/components/ui-user/loader";
+import { UserAvatar } from "@/components/ui-user/avatar-user";
+import { BotAvatar } from "@/components/ui-user/avatar-bot";
 import ReactMarkdown from "react-markdown";
+import { Message } from "ai";
 
 const ConversationPage = () => {
   const router = useRouter();
-  const [messages, setMessages] = useState<ChatCompletionMessage[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,7 +34,7 @@ const ConversationPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const userMessage: ChatCompletionMessage = {
+      const userMessage = {
         role: "user",
         content: values.prompt,
       };
@@ -48,7 +48,6 @@ const ConversationPage = () => {
     } catch (error: any) {
       console.log(error);
     } finally {
-      console.log("finally refresh");
       router.refresh();
     }
   };
@@ -61,7 +60,7 @@ const ConversationPage = () => {
         iconColor="text-violet-500"
         bgColor="bg-violet-500/10"
       />
-      <div className="px-4 lg:px-8">
+      <div className="px-10 lg:pr-32">
         <div>
           <Form {...form}>
             <form

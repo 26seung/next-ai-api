@@ -24,7 +24,7 @@ const ChatPage = async ({ params: { chatId } }: Props) => {
         iconColor="text-violet-500"
         bgColor="bg-violet-500/10"
       />
-      <div className="px-4 lg:px-8">
+      <div className="px-10 lg:pr-32">
         <ChatComponent newChat={false} chat_id={chatId} />
       </div>
     </div>

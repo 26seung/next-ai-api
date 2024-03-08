@@ -23,6 +23,8 @@ interface ChatProps {
   fileKey?: string;
 }
 
+type ChatSchema = z.infer<typeof formSchema>;
+
 const ChatComponent = ({ newChat, chat_id, fileKey }: ChatProps) => {
   const router = useRouter();
   // next-auth
@@ -54,7 +56,7 @@ const ChatComponent = ({ newChat, chat_id, fileKey }: ChatProps) => {
     },
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<ChatSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
@@ -116,6 +118,7 @@ const ChatComponent = ({ newChat, chat_id, fileKey }: ChatProps) => {
                 type="submit"
                 disabled={isLoading}
                 size="icon"
+                spinner={isLoading}
               >
                 Send
               </Button>
