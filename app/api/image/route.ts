@@ -9,8 +9,7 @@ const openai = new OpenAI({
 //  API POST
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { prompt, n = 1, size = "512x512" } = body;
+    const { prompt, size } = await req.json();
 
     // Exception Process
     if (!openai.apiKey) {
@@ -21,20 +20,19 @@ export async function POST(req: Request) {
     if (!prompt) {
       return new NextResponse("Prompt is required", { status: 400 });
     }
-    if (!n) {
-      return new NextResponse("n is required", { status: 400 });
-    }
+
     if (!size) {
       return new NextResponse("size is required", { status: 400 });
     }
 
     // API 전송
     const response = await openai.images.generate({
+      model: "dall-e-3",
       prompt,
-      n: parseInt(n, 10),
+      n: 1,
       size: size,
     });
-    console.log("[IMAGE_MESSAGE] : ", response.data);
+
     return NextResponse.json(response.data);
   } catch (error) {
     console.log("[IMAGE_ERROR] : ", error);
