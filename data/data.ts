@@ -2,7 +2,6 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { InMessage, chats, messages, pdf, users } from "@/lib/db/schema";
-import { getS3Url } from "@/lib/s3";
 import { eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 
