@@ -75,7 +75,7 @@ export async function POST(req: Request) {
       stream: true,
     });
     // Convert the response into a friendly text-stream
-    const stream = OpenAIStream(response, {
+    const stream = OpenAIStream(response as AsyncIterable<any>, {
       onStart: async () => {
         await dbSaveMessages({
           chatId,
