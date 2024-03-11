@@ -51,7 +51,7 @@ const Navbar = () => {
     <div className="flex items-center p-4" >
       <div className="flex w-full justify-end lg:pr-8">
         <div className="relative flex flex-row items-center gap-3">
-          <div className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full transition text-gray-600 hover:scale-105">
+          <div className="md:block text-sm font-semibold py-3 px-4 rounded-full transition text-gray-600 hover:scale-105">
             <Link href={"/dashboard"}>Go Dashboard</Link>
           </div>
           <div
