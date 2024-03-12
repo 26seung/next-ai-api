@@ -26,13 +26,9 @@ const PdfPage = async ({ params: { chatId } }: Props) => {
         bgColor="bg-violet-500/10"
       />
       <div className="flex px-4 lg:px-8 space-x-4">
-        {pdfs ? (
+        {pdfs && (
           <div className="flex-[2] min-h-screen rounded-lg border border-slate-300 bg-white">
             <PDFViewer pdfUrl={pdfs?.pdfUrl} />
-          </div>
-        ) : (
-          <div className="flex-[2] rounded-lg border border-slate-300 bg-white ">
-            <FileUpload />
           </div>
         )}
         <div className="flex-[2] rounded-lg border border-slate-300 bg-white ">
