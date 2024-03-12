@@ -99,6 +99,7 @@ const ConversationPage = () => {
                 type="submit"
                 disabled={isLoading}
                 size="icon"
+                spinner={isLoading}
               >
                 Send
               </Button>
