@@ -13,15 +13,25 @@ interface ModalProps {
 
 // 공통된 모달창 프레임 안에 content별 내용 삽입
 const ModalLogin = ({ isOpen, onClose }: ModalProps) => {
+  
+  // social Login
+  const providers = [
+    { providerName: "github", Icon: AiFillGithub },
+    { providerName: "google", Icon: FcGoogle },
+  ];
+  
+  const handleOAuthSignIn = (provider: string) => {
+    signIn(provider);
+  };
+
 
   // credential 구현 X
   const bodyContent = (
     <>
       <div className="flex relative p-4 flex-col">
-      <div className="flex justify-center">
-            <Image sizes="none" width={50}
-      height={50} alt="Logo" src="/logo.png" />
-          </div>
+        <div className="flex justify-center">
+          <Image sizes="none" width={50} height={50} alt="Logo" src="/logo.png" />
+        </div>
         <div className="mt-3 text-xl font-bold text-center">
           Welcome to AI assist 
         </div>
@@ -31,7 +41,6 @@ const ModalLogin = ({ isOpen, onClose }: ModalProps) => {
       </div>
     </>
     )
-
 
   // social Login
   const footerContent = (
@@ -47,26 +56,19 @@ const ModalLogin = ({ isOpen, onClose }: ModalProps) => {
       </div>
       {/* 로그인 버튼 */}
       <div className="flex flex-col gap-3 mt-3">
-        <Button
-          onClick={() => signIn("github")}
-          variant="outline"
-          className="relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transition w-full border-2"
-        >
-          <div className="absolute left-4">
-            <AiFillGithub size={24} />
-          </div>
-          Github 계정으로 로그인
-        </Button>
-        <Button
-          onClick={() => signIn("google")}
-          variant="outline"
-          className="relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transition w-full border-2"
-        >
-          <div className="absolute left-4">
-            <FcGoogle size={24} />
-          </div>
-          Google 계정으로 로그인
-        </Button>
+        {providers.map((provider) => (
+            <Button
+            key={provider.providerName}
+            onClick={() => handleOAuthSignIn(provider.providerName)}
+            variant="outline"
+            className="relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transition w-full border-2 font-normal"
+          >
+            <div className="absolute left-4">
+              <provider.Icon size={24} />
+            </div>
+            {provider.providerName.toUpperCase()} 계정으로 로그인
+          </Button>
+        ))}
         <div className="flex gap-2 justify-center text-sm mt-4 px-2 text-gray-500 ">
           간편하게 로그인 하세요
         </div>
